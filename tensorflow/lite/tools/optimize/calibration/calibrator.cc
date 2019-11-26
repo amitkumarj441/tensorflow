@@ -22,7 +22,7 @@ limitations under the License.
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "tensorflow/lite/c/c_api_internal.h"
+#include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/core/api/error_reporter.h"
 #include "tensorflow/lite/core/api/op_resolver.h"
 #include "tensorflow/lite/interpreter.h"
@@ -252,7 +252,7 @@ std::vector<int> GetLoggableTensorIndices(
     const flatbuffers::Vector<flatbuffers::Offset<Buffer>>* tensor_buffers) {
   std::vector<int> loggable;
   for (auto tensor_index : tensor_indices) {
-    if (tensor_index == kOptionalTensor) {
+    if (tensor_index == kTfLiteOptionalTensor) {
       continue;
     }
     auto tensor = tensors->Get(tensor_index);

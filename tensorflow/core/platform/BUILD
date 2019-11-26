@@ -7,9 +7,9 @@
 #
 #   The libraries in this package are not allowed to have ANY dependencies
 #   to any TensorFlow code outside this package.
-load("//tensorflow/core/platform:default/build_config_root.bzl", "if_static")
+load("//tensorflow/core/platform:build_config_root.bzl", "if_static")
 load(
-    "//tensorflow/core/platform:default/build_config.bzl",
+    "//tensorflow/core/platform:build_config.bzl",
     "tf_additional_lib_hdrs",
     "tf_additional_lib_srcs",
     "tf_additional_monitoring_srcs",
@@ -81,31 +81,6 @@ cc_library(
     srcs = ["abi.cc"],
     hdrs = ["abi.h"],
     deps = [":types"],
-)
-
-filegroup(
-    name = "annotation_hdrs",
-    srcs = [
-        "annotation.h",
-    ],
-    visibility = [
-        "//tensorflow/core:__pkg__",
-        "//tensorflow/python:__pkg__",
-    ],
-)
-
-cc_library(
-    name = "annotation",
-    srcs = ["annotation.cc"],
-    hdrs = ["annotation.h"],
-    visibility = [
-        "//perftools/accelerators/xprof:__subpackages__",
-        "//tensorflow:__subpackages__",
-    ],
-    deps = [
-        ":macros",
-        "@com_google_absl//absl/strings",
-    ],
 )
 
 cc_library(
@@ -399,6 +374,23 @@ cc_library(
 )
 
 cc_library(
+    name = "raw_coding",
+    hdrs = ["raw_coding.h"],
+    deps = [
+        ":byte_order",
+        ":types",
+    ],
+)
+
+cc_library(
+    name = "refcount",
+    hdrs = ["refcount.h"],
+    deps = [
+        ":logging",
+    ],
+)
+
+cc_library(
     name = "regexp",
     hdrs = ["regexp.h"],
     deps = [
@@ -616,7 +608,6 @@ cc_binary(
     visibility = ["//visibility:private"],
     deps = [
         ":abi",
-        ":annotation",
         ":byte_order",
         ":cord",
         ":cpu_feature_guard",
@@ -762,7 +753,6 @@ filegroup(
             "profile_utils/**/*.h",
         ],
         exclude = [
-            "annotation.h",
             "dynamic_annotations.h",
             "denormal.h",
             "gif.h",
@@ -801,7 +791,6 @@ filegroup(
             "**/human_readable_json.cc",
             "**/rocm_rocdl_path.cc",
             "abi.cc",
-            "annotation.cc",
             "cpu_info.cc",
             "cpu_feature_guard.cc",
             "denormal.cc",
@@ -862,10 +851,27 @@ exports_files(
 
 bzl_library(
     name = "build_config_root_bzl",
-    srcs = ["default/build_config_root.bzl"],
+    srcs = [
+        "build_config_root.bzl",
+        "default/build_config_root.bzl",
+    ],
 )
 
 bzl_library(
     name = "cuda_build_defs_bzl",
     srcs = ["default/cuda_build_defs.bzl"],
+)
+
+exports_files(
+    [
+        "stacktrace.h",
+        "cpu_info.h",
+        "types.h",
+        "macros.h",
+        "abi.h",
+        "logging.h",
+        "platform.h",
+        "byte_order.h",
+    ],
+    visibility = ["//tensorflow:__subpackages__"],
 )

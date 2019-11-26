@@ -23,13 +23,8 @@
 #ifndef LINALG_LIBRARY_OPS
 #define LINALG_LIBRARY_OPS
 
-#ifndef AFFINE_OPS_BASE
 include "mlir/Dialect/AffineOps/AffineOpsBase.td"
-#endif // AFFINE_OPS_BASE
-
-#ifndef LINALG_BASE
 include "mlir/Dialect/Linalg/IR/LinalgBase.td"
-#endif // LINALG_BASE
 
 class LinalgParametricNativeOpTrait<string prop, string parameters> :
   NativeOpTrait<"linalg::" # prop # parameters>
@@ -376,7 +371,7 @@ class GenericOpBase<string mnemonic> : LinalgLibraryBase_Op<mnemonic, []> {
                    I64ArrayAttr:$n_loop_types,
                    I64ArrayAttr:$n_views,
                    OptionalAttr<StrAttr>:$doc,
-                   OptionalAttr<SymbolRefAttr>:$fun,
+                   OptionalAttr<FlatSymbolRefAttr>:$fun,
                    OptionalAttr<StrAttr>:$library_call);
   let regions = (region AnyRegion:$region);
   let extraClassDeclaration = [{
@@ -464,7 +459,7 @@ def GenericOp : GenericOpBase<"generic"> {
 
     Where #trait_attributes is an alias of a dictionary attribute containing:
       - doc [optional]: a documentation string
-      - fun: a SymbolRefAttr that must resolve to an existing function symbol.
+      - fun: a FlatSymbolRefAttr that must resolve to an existing function symbol.
         To support inplace updates in a generic fashion, the signature of the
         function must be:
         ```
@@ -558,7 +553,7 @@ def IndexedGenericOp : GenericOpBase<"indexed_generic"> {
 
     Where #trait_attributes is an alias of a dictionary attribute containing:
       - doc [optional]: a documentation string
-      - fun: a SymbolRefAttr that must resolve to an existing function symbol.
+      - fun: a FlatSymbolRefAttr that must resolve to an existing function symbol.
         To support inplace updates in a generic fashion, the signature of the
         function must be:
         ```
